@@ -28,6 +28,7 @@ const Players = () => {
       category: 'Kabaddi',
       image: '/763.jpg'
     }
+    
   ]);
 
   const [openDialog, setOpenDialog] = useState(false);

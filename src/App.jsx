@@ -10,7 +10,7 @@ import Fixtures from './pages/Fixtures';
 import Home from './pages/Home';
 import Leagues from './pages/Leagues';
 import Login from './pages/Login';
-import Matches from './pages/Matches';
+import Teams from './pages/Teams';
 import Players from './pages/Players';
 import Profile from './pages/Profile';
 import Schedule from './pages/Schedule';
@@ -32,7 +32,7 @@ function App() {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/admin" element={<AdminPanel />} />
       <Route path="/profile" element={<Profile />} />
-      <Route path="/matches" element={<Matches />} />
+      <Route path="/teams" element={<Teams />} />
       <Route path="/players" element={<Players />} />
       <Route path="/leagues" element={<Leagues />} />
       <Route path="/about" element={<About />} />

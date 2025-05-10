@@ -29,7 +29,7 @@ const Navbar = () => {
         <Box>
           <Button color="inherit" component={Link} to="/">Home</Button>
           <Button color="inherit" component={Link} to="/fixtures">Fixtures</Button>
-          <Button color="inherit" component={Link} to="/matches">Matches</Button>
+          <Button color="inherit" component={Link} to="/Teams">Teams</Button>
           <Button color="inherit" component={Link} to="/players">Players</Button>
           <Button color="inherit" component={Link} to="/leagues">Leagues</Button>
           {user?.role === 'admin' && (
