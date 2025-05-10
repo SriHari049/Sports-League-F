@@ -1,8 +1,26 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField
+} from '@mui/material';
 import { useState } from 'react';
 
 const AddMatchDialog = ({ open, onClose, onSubmit }) => {
-  const [match, setMatch] = useState({ teamA: '', teamB: '', date: '', logoA: '', logoB: '' });
+  const [match, setMatch] = useState({
+    teamA: '',
+    teamB: '',
+    date: '',
+    logoA: '',
+    logoB: '',
+    category: ''
+  });
 
   const handleChange = (e) => {
     setMatch({ ...match, [e.target.name]: e.target.value });
@@ -14,7 +32,7 @@ const AddMatchDialog = ({ open, onClose, onSubmit }) => {
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setMatch(prev => ({ ...prev, [team]: reader.result }));
+      setMatch((prev) => ({ ...prev, [team]: reader.result }));
     };
     reader.readAsDataURL(file);
   };
@@ -28,11 +46,33 @@ const AddMatchDialog = ({ open, onClose, onSubmit }) => {
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Add New Match</DialogTitle>
       <DialogContent>
-        <TextField label="Team A" name="teamA" fullWidth margin="dense" onChange={handleChange} />
-        <input type="file" accept="image/*" onChange={(e) => handleLogoUpload(e, 'logoA')} style={{ margin: '10px 0' }} />
-        
-        <TextField label="Team B" name="teamB" fullWidth margin="dense" onChange={handleChange} />
-        <input type="file" accept="image/*" onChange={(e) => handleLogoUpload(e, 'logoB')} style={{ margin: '10px 0' }} />
+        <TextField
+          label="Team A"
+          name="teamA"
+          fullWidth
+          margin="dense"
+          onChange={handleChange}
+        />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => handleLogoUpload(e, 'logoA')}
+          style={{ margin: '10px 0' }}
+        />
+
+        <TextField
+          label="Team B"
+          name="teamB"
+          fullWidth
+          margin="dense"
+          onChange={handleChange}
+        />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => handleLogoUpload(e, 'logoB')}
+          style={{ margin: '10px 0' }}
+        />
 
         <TextField
           type="date"
@@ -42,10 +82,27 @@ const AddMatchDialog = ({ open, onClose, onSubmit }) => {
           InputLabelProps={{ shrink: true }}
           onChange={handleChange}
         />
+
+        <FormControl fullWidth margin="dense">
+          <InputLabel>Category</InputLabel>
+          <Select
+            name="category"
+            value={match.category}
+            onChange={handleChange}
+            label="Category"
+          >
+            <MenuItem value="Cricket">Cricket</MenuItem>
+            <MenuItem value="Kabaddi">Kabaddi</MenuItem>
+            <MenuItem value="Football">Football</MenuItem>
+            <MenuItem value="Tennis">Tennis</MenuItem>
+          </Select>
+        </FormControl>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit} variant="contained">Add Match</Button>
+        <Button onClick={handleSubmit} variant="contained">
+          Add Match
+        </Button>
       </DialogActions>
     </Dialog>
   );

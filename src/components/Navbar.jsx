@@ -18,7 +18,10 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="fixed" // ✅ make navbar fixed
+      sx={{ backgroundColor: 'rgba(4, 16, 51, 0.9)', zIndex: 1100 }}
+    >
       <Toolbar>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           League Hub
@@ -29,12 +32,9 @@ const Navbar = () => {
           <Button color="inherit" component={Link} to="/matches">Matches</Button>
           <Button color="inherit" component={Link} to="/players">Players</Button>
           <Button color="inherit" component={Link} to="/leagues">Leagues</Button>
-
-          {/* ✅ Admin-only SCHEDULE link */}
           {user?.role === 'admin' && (
             <Button color="inherit" component={Link} to="/schedule">Schedule</Button>
           )}
-
           {!user ? (
             <Button color="inherit" component={Link} to="/login">Login</Button>
           ) : (

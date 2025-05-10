@@ -10,7 +10,7 @@ const Footer = () => {
       <Grid container spacing={4} justifyContent="center">
         {/* Logo */}
         <Grid item xs={12} md={3}>
-          <img src="/logo.png" alt="Logo" style={{ maxWidth: 150 }} />
+          <img src="/hub.png" alt="Logo" style={{ maxWidth: 150 }} />
           <Typography mt={1} variant="body2" color="textSecondary">
             An Integrass Company
           </Typography>
@@ -42,7 +42,7 @@ const Footer = () => {
             <img src="/google.jpg" alt="Play Store" width={120} />
           </Box>
           <Typography mt={2}>Get in Touch</Typography>
-          <Typography fontWeight="bold">info@isportz.co</Typography>
+          <Typography fontWeight="bold">info@LeagueHub.co</Typography>
         </Grid>
       </Grid>
 

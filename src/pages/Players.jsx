@@ -18,16 +18,21 @@ const Players = () => {
       name: 'Bob',
       team: 'Team B',
       position: 'Defender',
-      category: 'Football',
-      image: 'Bob.png'
+      category: 'Cricket',
+      image: '/bob.png'
+    },
+    {
+      name: 'Charlie',
+      team: 'Team C',
+      position: 'Raider',
+      category: 'Kabaddi',
+      image: '/763.jpg'
     }
-
   ]);
 
   const [openDialog, setOpenDialog] = useState(false);
 
   const handleAddPlayer = (newPlayer) => {
-    // Add placeholder image if not provided
     const playerWithImage = {
       ...newPlayer,
       image: newPlayer.image || '/images/players/default.jpg'
@@ -36,6 +41,8 @@ const Players = () => {
   };
 
   const isOrganizer = user?.role === 'organizer';
+
+  const categories = ['Football', 'Cricket', 'Tennis', 'Kabaddi'];
 
   return (
     <Box sx={{ p: 2 }}>
@@ -50,30 +57,38 @@ const Players = () => {
             open={openDialog}
             onClose={() => setOpenDialog(false)}
             onSubmit={handleAddPlayer}
+            categories={categories}
           />
         </>
       )}
 
-      <Grid container spacing={2}>
-        {players.map((player, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Card>
-              <CardMedia
-                component="img"
-                height="200"
-                image={player.image}
-                alt={`${player.name} photo`}
-              />
-              <CardContent>
-                <Typography variant="h6">{player.name}</Typography>
-                <Typography>Team: {player.team}</Typography>
-                <Typography>Position: {player.position}</Typography>
-                <Typography>Category: {player.category}</Typography>
-              </CardContent>
-            </Card>
+      {categories.map((category) => (
+        <Box key={category} sx={{ mt: 3 }}>
+          <Typography variant="h5" gutterBottom>{category}</Typography>
+          <Grid container spacing={2}>
+            {players
+              .filter((player) => player.category === category)
+              .map((player, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Card>
+                    <CardMedia
+                      component="img"
+                      height="200"
+                      image={player.image}
+                      alt={`${player.name} photo`}
+                    />
+                    <CardContent>
+                      <Typography variant="h6">{player.name}</Typography>
+                      <Typography>Team: {player.team}</Typography>
+                      <Typography>Position: {player.position}</Typography>
+                      <Typography>Category: {player.category}</Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
           </Grid>
-        ))}
-      </Grid>
+        </Box>
+      ))}
     </Box>
   );
 };

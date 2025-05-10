@@ -13,8 +13,34 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
-    await login(credentials);
-    navigate('/');
+    try {
+      const response = await fetch('http://localhost:8081/users/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to login');
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const data = await response.json();
+        await login(data); // Assuming login function handles storing user data
+      } else if (contentType && contentType.includes('text/plain')) {
+        const data = await response.text();
+        await login({ token: data }); // Assuming login function can handle plain text token
+      } else {
+        throw new Error('Invalid response format');
+      }
+      navigate('/');
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('Login failed. Please check your credentials.');
+    }
   };
 
   return (

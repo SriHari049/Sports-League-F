@@ -1,28 +1,76 @@
 import {
   Box,
-  Button,
   Card,
   CardContent,
   Typography
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
-const newsItems = [
-  'Welcome to League Hub!',
-  'Book your tickets now for the Premier League.',
-  'Player registrations are open!',
-  'Final match of the tournament is this Sunday!',
+const liveMatches = [
+  {
+    series: 'IPL 2025',
+    match: ' Wankhede Stadium,Mumbai',
+    team1: 'MI',
+    team2: 'RCB',
+    status: 'Starts at 11:00 PM',
+  },
+  {
+    series: 'PKL 2025',
+    match: 'Shree Shiv Chhatrapati Sports Complex, Balewadi, Pune',
+    team1: 'Patna',
+    team2: 'Vizay',
+    status: 'Starts at 10:00 AM',
+  },
+  {
+    series: 'ISL 2025',
+    match: 'Arun Jaitley Stadium, Dehli',
+    team1: 'Goa',
+    team2: 'Chennai',
+    status: 'Starts at: 10:00 AM',
+  },
+  {
+    series: 'India Open 2025',
+    match: 'SDAT Tennis Stadium, Bangalore',
+    team1: 'Rohan Bopanna',
+    team2: 'Mahesh Bhupathi',
+    status: 'Starts at: 10:00 AM',
+  },
 ];
 
-const featuredLeagues = [
-  { name: 'Premier League', description: 'Top-tier football in England' },
-  { name: 'La Liga', description: 'Spain’s elite league' },
-  { name: 'Serie A', description: 'Italian football at its best' },
-  { name: 'Bundesliga', description: 'Germany’s powerhouse' },
+const upcomingMatches = [
+  {
+    series: 'World Cup 2025',
+    match: 'Eden Gardens, Kolkata',
+    team1: 'India',
+    team2: 'Australia',
+    status: 'Tomorrow at 2:00 PM',
+  },
+  {
+    series: 'PKL 2025',
+    match: 'Jawaharlal Nehru Stadium, Chennai ',
+    team1: 'Gujarat',
+    team2: 'Tamil Nadu',
+    status: 'Saturday at 6:00 PM',
+  },
+  {
+    series: 'Premier League 2025',
+    match: 'Old Trafford, Manchester',
+    team1: 'Manchester United',
+    team2: 'Chelsea',
+    status: 'Saturday at 6:00 PM',
+  },
+  {
+    series: 'Premier League 2025',
+    match: 'Old Trafford, Manchester',
+    team1: 'Manchester United',
+    team2: 'Chelsea',
+    status: 'Saturday at 6:00 PM',
+  },
 ];
 
 const Home = () => {
-  const navigate = useNavigate();
+  const [scores] = useState(liveMatches);
+  const [upcoming] = useState(upcomingMatches);
 
   return (
     <Box
@@ -39,7 +87,7 @@ const Home = () => {
           left: 0,
           width: '100%',
           height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          backgroundColor: 'hsla(0, 38.50%, 97.50%, 0.60)',
           zIndex: 0,
         },
         '& > *': {
@@ -51,90 +99,147 @@ const Home = () => {
         py: 4,
       }}
     >
-      <Typography variant="h2" align="center" gutterBottom>
-        League Hub
-      </Typography>
-      <Typography variant="h6" align="center" gutterBottom>
-        Manage, Participate, and Enjoy Your Favorite Sports Leagues
-      </Typography>
-
-      <Box textAlign="center" my={4}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => navigate('/login')}
-          sx={{ mx: 2, px: 4 }}
-        >
-          Login
-        </Button>
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={() => navigate('/book-tickets')}
-          sx={{ mx: 2, px: 4, color: 'white', borderColor: 'white' }}
-        >
-          Book Tickets
-        </Button>
-      </Box>
-
-      {/* News Ticker */}
+      {/* League Hub Title Box */}
       <Box
         sx={{
-          backgroundColor: '#111',
-          py: 1,
-          px: 2,
-          color: '#fff',
-          fontWeight: 'bold',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
+          maxWidth: 600,
+          margin: '0 auto 40px auto',
+          backgroundColor: '#1b1a1a',
+          borderRadius: 2,
+          p: 4,
+          textAlign: 'center',
+          boxShadow: 3,
+        }}
+      >
+        <Typography variant="h2" gutterBottom>
+          League Hub
+        </Typography>
+        <Typography variant="h6">
+          Manage, Participate, and Enjoy Your Favorite Sports Leagues
+        </Typography>
+      </Box>
+
+      {/* Live Scores Section */}
+      <Box
+        sx={{
+          backgroundColor: 'white',
+          p: 3,
+          borderRadius: 2,
+          boxShadow: 3,
+          maxWidth: '100%',
           mb: 4,
         }}
       >
+        <Typography variant="h5" gutterBottom sx={{ color: 'black' }}>
+          Live Scores
+        </Typography>
+
         <Box
-          component="div"
           sx={{
-            display: 'inline-block',
-            animation: 'scrollLeft 20s linear infinite',
+            display: 'flex',
+            gap: 2,
+            overflowX: 'auto',
+            py: 1,
           }}
         >
-          {newsItems.join(' 🔹 ')}
-        </Box>
-
-        <style>
-          {`
-            @keyframes scrollLeft {
-              0% { transform: translateX(100%); }
-              100% { transform: translateX(-100%); }
-            }
-          `}
-        </style>
-      </Box>
-
-      {/* Featured Leagues */}
-      <Box>
-        <Typography variant="h5" gutterBottom>
-          Featured Leagues
-        </Typography>
-        <Box sx={{ display: 'flex', overflowX: 'auto', gap: 2, pb: 2 }}>
-          {featuredLeagues.map((league, index) => (
+          {scores.map((match, index) => (
             <Card
               key={index}
               sx={{
-                minWidth: 200,
-                backgroundColor: '#fff',
+                minWidth: 300,
+                backgroundColor: 'white',
                 color: 'black',
+                borderRadius: 2,
                 flexShrink: 0,
-                textAlign: 'center',
-                transition: 'transform 0.3s',
-                '&:hover': {
-                  transform: 'scale(1.05)',
-                  boxShadow: 6,
-                },
+                boxShadow: 4,
               }}
             >
               <CardContent>
-                <Typography variant="h6">{league.name}</Typography>
-                <Typography variant="body2">{league.description}</Typography>
+                <Typography variant="subtitle2" sx={{ color: '#555', fontWeight: 'bold' }}>
+                  {match.series}
+                </Typography>
+                <Typography variant="body2" gutterBottom sx={{ fontSize: '0.9rem', fontWeight: '500' }}>
+                  {match.match}
+                </Typography>
+
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{match.team1}</Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{match.team2}</Typography>
+                </Box>
+
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mt: 1,
+                    color: match.status.includes('Cancelled') ? 'green' : 'orange',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {match.status}
+                </Typography>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+      </Box>
+
+      {/* Upcoming Matches Section */}
+      <Box
+        sx={{
+          backgroundColor: 'white',
+          p: 3,
+          borderRadius: 2,
+          boxShadow: 3,
+          maxWidth: '100%',
+        }}
+      >
+        <Typography variant="h5" gutterBottom sx={{ color: 'black' }}>
+          Upcoming Matches
+        </Typography>
+
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 2,
+            overflowX: 'auto',
+            py: 1,
+          }}
+        >
+          {upcoming.map((match, index) => (
+            <Card
+              key={index}
+              sx={{
+                minWidth: 300,
+                backgroundColor: 'white',
+                color: 'black',
+                borderRadius: 2,
+                flexShrink: 0,
+                boxShadow: 4,
+              }}
+            >
+              <CardContent>
+                <Typography variant="subtitle2" sx={{ color: '#555', fontWeight: 'bold' }}>
+                  {match.series}
+                </Typography>
+                <Typography variant="body2" gutterBottom sx={{ fontSize: '0.9rem', fontWeight: '500' }}>
+                  {match.match}
+                </Typography>
+
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{match.team1}</Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{match.team2}</Typography>
+                </Box>
+
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mt: 1,
+                    color: 'gray',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {match.status}
+                </Typography>
               </CardContent>
             </Card>
           ))}

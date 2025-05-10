@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography, Stack, Chip } from '@mui/material';
 import { useState } from 'react';
 import AddMatchDialog from '../components/AddMatchDialog';
 import ScoreCard from '../components/ScoreCard';
@@ -9,6 +9,10 @@ import { useAuth } from '../contexts/AuthContext';
 const Matches = () => {
   const { user } = useAuth();
 
+  const categories = ['All', 'Cricket', 'Kabaddi', 'Football', 'Tennis'];
+
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
   const [matches, setMatches] = useState([
     {
       id: 1,
@@ -18,8 +22,21 @@ const Matches = () => {
       logoB: '/logos/lions.png',
       scoreA: 145,
       scoreB: 130,
-      status: 'Live'
+      status: 'Live',
+      category: 'Cricket',
+    },
+    {
+      id: 2,
+      teamA: 'Panthers',
+      teamB: 'Wolves',
+      logoA: '/logos/panthers.png',
+      logoB: '/logos/wolves.png',
+      scoreA: 89,
+      scoreB: 94,
+      status: 'Upcoming',
+      category: 'Football',
     }
+    // Add more matches with categories...
   ]);
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -30,19 +47,34 @@ const Matches = () => {
       id: matches.length + 1,
       scoreA: 0,
       scoreB: 0,
-      status: 'Upcoming'
+      status: 'Upcoming',
+      category: newMatch.category || 'Cricket', // Default to Cricket
     };
     setMatches([...matches, matchWithId]);
   };
 
+  const filteredMatches = selectedCategory === 'All'
+    ? matches
+    : matches.filter(match => match.category === selectedCategory);
+
   const isAdmin = user?.role === 'admin';
   const isOrganizer = user?.role === 'organizer';
   const isViewer = user?.role === 'viewer';
-  const isPlayer = user?.role === 'player';
 
   return (
     <Box sx={{ p: 2 }}>
       <Typography variant="h4" gutterBottom>Matches</Typography>
+
+      <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: 'wrap' }}>
+        {categories.map((cat) => (
+          <Chip
+            key={cat}
+            label={cat}
+            color={selectedCategory === cat ? 'primary' : 'default'}
+            onClick={() => setSelectedCategory(cat)}
+          />
+        ))}
+      </Stack>
 
       {isOrganizer && (
         <>
@@ -58,7 +90,7 @@ const Matches = () => {
       )}
 
       <Grid container spacing={2}>
-        {matches.map((match) => (
+        {filteredMatches.map((match) => (
           <Grid item xs={12} md={6} key={match.id}>
             <ScoreCard match={match} />
             {isViewer && <TicketBookingForm matchId={match.id} />}

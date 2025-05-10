@@ -1,7 +1,7 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useState } from 'react';
 
-const AddPlayerDialog = ({ open, onClose, onSubmit }) => {
+const AddPlayerDialog = ({ open, onClose, onSubmit, categories = [] }) => {
   const [form, setForm] = useState({
     name: '',
     team: '',
@@ -18,7 +18,7 @@ const AddPlayerDialog = ({ open, onClose, onSubmit }) => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageURL = URL.createObjectURL(file); // Temporarily use blob URL
+      const imageURL = URL.createObjectURL(file);
       setForm({ ...form, image: imageURL });
     }
   };
@@ -40,7 +40,19 @@ const AddPlayerDialog = ({ open, onClose, onSubmit }) => {
         <TextField fullWidth margin="normal" name="name" label="Name" value={form.name} onChange={handleChange} />
         <TextField fullWidth margin="normal" name="team" label="Team" value={form.team} onChange={handleChange} />
         <TextField fullWidth margin="normal" name="position" label="Position" value={form.position} onChange={handleChange} />
-        <TextField fullWidth margin="normal" name="category" label="Category" value={form.category} onChange={handleChange} />
+
+        <InputLabel sx={{ mt: 2 }}>Category</InputLabel>
+        <Select
+          fullWidth
+          name="category"
+          value={form.category}
+          onChange={handleChange}
+        >
+          {categories.map((cat) => (
+            <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+          ))}
+        </Select>
+
         <InputLabel sx={{ mt: 2 }}>Upload Player Image</InputLabel>
         <input
           type="file"
