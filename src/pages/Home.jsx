@@ -5,11 +5,12 @@ import {
   Typography
 } from '@mui/material';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const liveMatches = [
   {
     series: 'IPL 2025',
-    match: ' Wankhede Stadium,Mumbai',
+    match: 'Wankhede Stadium, Mumbai',
     team1: 'MI',
     team2: 'RCB',
     status: 'Starts at 11:00 PM',
@@ -47,7 +48,7 @@ const upcomingMatches = [
   },
   {
     series: 'PKL 2025',
-    match: 'Jawaharlal Nehru Stadium, Chennai ',
+    match: 'Jawaharlal Nehru Stadium, Chennai',
     team1: 'Gujarat',
     team2: 'Tamil Nadu',
     status: 'Saturday at 6:00 PM',
@@ -71,6 +72,13 @@ const upcomingMatches = [
 const Home = () => {
   const [scores] = useState(liveMatches);
   const [upcoming] = useState(upcomingMatches);
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  const handleLiveScoreClick = (match) => {
+    const team1 = encodeURIComponent(match.team1);
+    const team2 = encodeURIComponent(match.team2);
+    navigate(`/match/${team1}/${team2}`);
+  };
 
   return (
     <Box
@@ -145,6 +153,7 @@ const Home = () => {
           {scores.map((match, index) => (
             <Card
               key={index}
+              onClick={() => handleLiveScoreClick(match)} // Handle click
               sx={{
                 minWidth: 300,
                 backgroundColor: 'white',
@@ -152,6 +161,7 @@ const Home = () => {
                 borderRadius: 2,
                 flexShrink: 0,
                 boxShadow: 4,
+                cursor: 'pointer',
               }}
             >
               <CardContent>

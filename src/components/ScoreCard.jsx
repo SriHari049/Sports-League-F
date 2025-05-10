@@ -1,6 +1,43 @@
+import React, { useEffect, useState } from 'react';
 import { Avatar, Box, Card, CardContent, Typography } from '@mui/material';
+import axios from 'axios';
 
-const ScoreCard = ({ match }) => {
+const ScoreCard = ({ matchId }) => {
+  const [match, setMatch] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Fetch JWT token from localStorage (or any other storage solution)
+    const token = localStorage.getItem('jwtToken');
+
+    // Fetch match data from the API
+    const fetchMatchData = async () => {
+      try {
+        const response = await axios.get(`https://localhost:8081/matches/${matchId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setMatch(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to fetch match data.');
+        setLoading(false);
+      }
+    };
+
+    fetchMatchData();
+  }, [matchId]);
+
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
+
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
+  }
+
   return (
     <Card sx={{ m: 2 }}>
       <CardContent>

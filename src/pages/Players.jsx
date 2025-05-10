@@ -1,49 +1,43 @@
 import { Box, Button, Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddPlayerDialog from '../components/AddPlayerDialog';
 import { useAuth } from '../contexts/AuthContext';
+import { fetchPlayers, addPlayer } from '../services/api'; // Updated API functions
 
 const Players = () => {
-  const { user } = useAuth();
+  const { user } = useAuth(); // Get the user info from context
 
-  const [players, setPlayers] = useState([
-    {
-      name: 'Alice',
-      team: 'Team A',
-      position: 'Forward',
-      category: 'Football',
-      image: '/alice.png'
-    },
-    {
-      name: 'Bob',
-      team: 'Team B',
-      position: 'Defender',
-      category: 'Cricket',
-      image: '/bob.png'
-    },
-    {
-      name: 'Charlie',
-      team: 'Team C',
-      position: 'Raider',
-      category: 'Kabaddi',
-      image: '/763.jpg'
-    }
-    
-  ]);
-
+  // State for players and dialog
+  const [players, setPlayers] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const handleAddPlayer = (newPlayer) => {
-    const playerWithImage = {
-      ...newPlayer,
-      image: newPlayer.image || '/images/players/default.jpg'
-    };
-    setPlayers([...players, playerWithImage]);
-  };
-
-  const isOrganizer = user?.role === 'organizer';
-
+  const isOrganizer = user?.role === 'organizer'; // Check if the user is an organizer
   const categories = ['Football', 'Cricket', 'Tennis', 'Kabaddi'];
+
+  // Fetch players data from the API
+  useEffect(() => {
+    const loadPlayers = async () => {
+      try {
+        const playersData = await fetchPlayers();
+        setPlayers(playersData);
+      } catch (error) {
+        console.error('Error fetching players:', error);
+      }
+    };
+    loadPlayers();
+  }, []);
+
+  // Handle adding a new player
+  const handleAddPlayer = async (newPlayer) => {
+    try {
+      const playerWithImage = { ...newPlayer, image: newPlayer.image || '/images/players/default.jpg' };
+      const addedPlayer = await addPlayer(playerWithImage);
+      setPlayers([...players, addedPlayer]);
+      setOpenDialog(false); // Close dialog after adding player
+    } catch (error) {
+      console.error('Error adding player:', error);
+    }
+  };
 
   return (
     <Box sx={{ p: 2 }}>
@@ -68,7 +62,7 @@ const Players = () => {
           <Typography variant="h5" gutterBottom>{category}</Typography>
           <Grid container spacing={2}>
             {players
-              .filter((player) => player.category === category)
+              .filter((player) => player.category === category) // Filter players by category
               .map((player, index) => (
                 <Grid item xs={12} sm={6} md={4} key={index}>
                   <Card>

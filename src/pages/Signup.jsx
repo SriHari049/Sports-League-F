@@ -9,8 +9,9 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signupUser } from '../services/auth';
+import { signupUser } from '../services/auth';  // Assuming signupUser is an API service
 import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -22,22 +23,33 @@ const Signup = () => {
     password: '',
     role: 'viewer'
   });
+  const [error, setError] = useState('');
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async () => {
     try {
-      await signupUser(form);
-      await login(form); // Auto login after signup
+      // Call the signup API
+      const response = await signupUser(form);
+
+      // Assuming the response contains a JWT token
+      const { token, user } = response.data;
+
+      // Store token and user info in localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Auto login after signup
+      await login(user);
 
       // Redirect based on role
-      if (form.role === 'admin') navigate('/admin');
-      else if (form.role === 'organizer' || form.role === 'player')
+      if (user.role === 'admin') navigate('/admin');
+      else if (user.role === 'organizer' || user.role === 'player')
         navigate('/dashboard');
       else navigate('/profile');
     } catch (err) {
-      alert('Signup failed. Please try again.');
+      setError('Signup failed. Please try again.');
     }
   };
 
@@ -47,6 +59,8 @@ const Signup = () => {
         <Typography variant="h5" gutterBottom align="center">
           🚀 Create Your Account
         </Typography>
+
+        {error && <Typography color="error" variant="body2" align="center">{error}</Typography>}
 
         <TextField
           fullWidth

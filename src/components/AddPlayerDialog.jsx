@@ -1,69 +1,94 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+// components/AddPlayerDialog.jsx
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, MenuItem } from '@mui/material';
 import { useState } from 'react';
 
-const AddPlayerDialog = ({ open, onClose, onSubmit, categories = [] }) => {
-  const [form, setForm] = useState({
+const AddPlayerDialog = ({ open, onClose, onSubmit, categories }) => {
+  const [playerData, setPlayerData] = useState({
     name: '',
     team: '',
     position: '',
-    category: '',
+    category: categories[0], // Default category to the first in the list
     image: ''
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setPlayerData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageURL = URL.createObjectURL(file);
-      setForm({ ...form, image: imageURL });
-    }
-  };
-
-  const handleSubmit = () => {
-    if (!form.name || !form.team || !form.position || !form.category) {
-      alert('Please fill all fields');
+  const handleSave = () => {
+    if (!playerData.name || !playerData.team || !playerData.position || !playerData.category) {
+      alert('Please fill all fields.');
       return;
     }
-    onSubmit(form);
+    onSubmit(playerData);
+    setPlayerData({
+      name: '',
+      team: '',
+      position: '',
+      category: categories[0],
+      image: ''
+    });
     onClose();
-    setForm({ name: '', team: '', position: '', category: '', image: '' });
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Add New Player</DialogTitle>
+      <DialogTitle>Add Player</DialogTitle>
       <DialogContent>
-        <TextField fullWidth margin="normal" name="name" label="Name" value={form.name} onChange={handleChange} />
-        <TextField fullWidth margin="normal" name="team" label="Team" value={form.team} onChange={handleChange} />
-        <TextField fullWidth margin="normal" name="position" label="Position" value={form.position} onChange={handleChange} />
-
-        <InputLabel sx={{ mt: 2 }}>Category</InputLabel>
-        <Select
+        <TextField
           fullWidth
-          name="category"
-          value={form.category}
+          label="Player Name"
+          name="name"
+          value={playerData.name}
           onChange={handleChange}
+          margin="normal"
+        />
+        <TextField
+          fullWidth
+          label="Team"
+          name="team"
+          value={playerData.team}
+          onChange={handleChange}
+          margin="normal"
+        />
+        <TextField
+          fullWidth
+          label="Position"
+          name="position"
+          value={playerData.position}
+          onChange={handleChange}
+          margin="normal"
+        />
+        <TextField
+          select
+          fullWidth
+          label="Category"
+          name="category"
+          value={playerData.category}
+          onChange={handleChange}
+          margin="normal"
         >
-          {categories.map((cat) => (
-            <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+          {categories.map((category) => (
+            <MenuItem key={category} value={category}>
+              {category}
+            </MenuItem>
           ))}
-        </Select>
-
-        <InputLabel sx={{ mt: 2 }}>Upload Player Image</InputLabel>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          style={{ marginTop: 8 }}
+        </TextField>
+        <TextField
+          fullWidth
+          label="Image URL"
+          name="image"
+          value={playerData.image}
+          onChange={handleChange}
+          margin="normal"
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleSubmit}>Add Player</Button>
+        <Button onClick={handleSave} variant="contained">
+          Add Player
+        </Button>
       </DialogActions>
     </Dialog>
   );

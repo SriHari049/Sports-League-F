@@ -1,75 +1,54 @@
 import { Delete, Edit } from '@mui/icons-material';
 import {
-    Avatar,
-    Button,
-    Card,
-    CardContent,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    IconButton,
-    Stack,
-    TextField,
-    Typography,
+  Avatar,
+  Button,
+  Card,
+  CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const teamCategories = ['All', 'Cricket', 'Kabaddi', 'Football', 'Tennis'];
 
-const initialTeams = [
-  {
-    id: 1,
-    name: 'Mumbai Warriors',
-    sport: 'Cricket',
-    logo: '/mi.png',
-  },
-  {
-    id: 2,
-    name: 'Delhi Dynamos',
-    sport: 'Football',
-    logo: '/dd.png',
-  },
-  {
-    id: 3,
-    name: 'Mumba',
-    sport: 'Kabbadi',
-    logo: '/mumba.png',
-  },
-  {
-    id: 4,
-    name: 'Bengaluru Bulls',
-    sport: 'Kabaddi',
-    logo: '/bb.png',
-  },
-  {
-    id: 5,
-    name: 'Rajasthan Royals',
-    sport: 'Kabaddi',
-    logo: '/rr.png',
-  },
-  {
-    id: 6,
-    name: 'Kolkata Knight Riders',
-    sport: 'Cricket',
-    logo: '/kkr.png',
-  },
-  {
-    id: 7,
-    name: 'Chennai Super Kings',
-    sport: 'Cricket',
-    logo: '/csk.png',
-  },
-];
-
 const Teams = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [teams, setTeams] = useState(initialTeams);
+  const [teams, setTeams] = useState([]);
   const [open, setOpen] = useState(false);
   const [editTeam, setEditTeam] = useState(null);
   const [formData, setFormData] = useState({ name: '', sport: '', logo: '' });
+  const [error, setError] = useState('');
 
   const userRole = JSON.parse(localStorage.getItem('user'))?.role || 'viewer';
+  const token = localStorage.getItem('token');
+
+  // Fetch teams from API on mount
+  useEffect(() => {
+    if (!token) {
+      setError('Unauthorized access');
+      return;
+    }
+
+    const fetchTeams = async () => {
+      try {
+        const response = await axios.get('https://localhost:8081/teams', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setTeams(response.data);
+      } catch (err) {
+        setError('Error fetching teams');
+      }
+    };
+
+    fetchTeams();
+  }, [token]);
 
   const filteredTeams =
     selectedCategory === 'All'
@@ -89,25 +68,57 @@ const Teams = () => {
   const handleClose = () => {
     setOpen(false);
     setEditTeam(null);
+    setError('');
   };
 
-  const handleSave = () => {
-    if (editTeam) {
-      setTeams((prev) =>
-        prev.map((t) => (t.id === editTeam.id ? { ...t, ...formData } : t))
-      );
-    } else {
-      const newTeam = {
-        id: Date.now(),
-        ...formData,
-      };
-      setTeams((prev) => [...prev, newTeam]);
+  const handleSave = async () => {
+    if (!token) {
+      setError('Unauthorized access');
+      return;
     }
-    handleClose();
+
+    const requestData = {
+      name: formData.name,
+      sport: formData.sport,
+      logo: formData.logo,
+    };
+
+    try {
+      if (editTeam) {
+        // Update team
+        await axios.put(`https://localhost:8081/teams/${editTeam.id}`, requestData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setTeams((prev) =>
+          prev.map((t) => (t.id === editTeam.id ? { ...t, ...formData } : t))
+        );
+      } else {
+        // Add new team
+        const response = await axios.post('https://localhost:8081/teams', requestData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setTeams((prev) => [...prev, response.data]);
+      }
+      handleClose();
+    } catch (err) {
+      setError('Error saving team');
+    }
   };
 
-  const handleDelete = (id) => {
-    setTeams((prev) => prev.filter((t) => t.id !== id));
+  const handleDelete = async (id) => {
+    if (!token) {
+      setError('Unauthorized access');
+      return;
+    }
+
+    try {
+      await axios.delete(`https://localhost:8081/teams/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setTeams((prev) => prev.filter((t) => t.id !== id));
+    } catch (err) {
+      setError('Error deleting team');
+    }
   };
 
   return (
@@ -115,6 +126,8 @@ const Teams = () => {
       <Typography variant="h4" gutterBottom>
         Teams
       </Typography>
+
+      {error && <Typography color="error">{error}</Typography>}
 
       <Stack direction="row" spacing={2} mb={3}>
         {teamCategories.map((category) => (

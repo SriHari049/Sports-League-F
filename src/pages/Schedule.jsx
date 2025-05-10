@@ -1,6 +1,7 @@
 import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { scheduleMatch } from '../services/matches'; // Assuming the scheduleMatch API service exists
 
 const Schedule = () => {
   const { user } = useAuth();
@@ -12,12 +13,15 @@ const Schedule = () => {
     time: '',
     venue: ''
   });
+  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setMatchData({ ...matchData, [e.target.name]: e.target.value });
   };
 
-  const handleSchedule = () => {
+  const handleSchedule = async () => {
     const { teamA, teamB, date, time, venue } = matchData;
 
     if (!teamA || !teamB || !date || !time || !venue) {
@@ -30,16 +34,19 @@ const Schedule = () => {
       return;
     }
 
-    const newMatch = {
-      id: Date.now(),
-      ...matchData
-    };
+    setLoading(true);
 
-    const existing = JSON.parse(localStorage.getItem('fixtures')) || [];
-    localStorage.setItem('fixtures', JSON.stringify([...existing, newMatch]));
+    try {
+      // Call the API to schedule the match
+      await scheduleMatch({ ...matchData, token: localStorage.getItem('token') });
 
-    alert('Match scheduled successfully!');
-    setMatchData({ teamA: '', teamB: '', date: '', time: '', venue: '' });
+      alert('Match scheduled successfully!');
+      setMatchData({ teamA: '', teamB: '', date: '', time: '', venue: '' });
+    } catch (err) {
+      setError('Error scheduling match. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (user?.role !== 'admin') {
@@ -54,6 +61,8 @@ const Schedule = () => {
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>📅 Schedule a Match</Typography>
       <Paper sx={{ maxWidth: 500, p: 3, mx: 'auto' }}>
+        {error && <Typography color="error">{error}</Typography>}
+        
         <TextField
           fullWidth
           label="Team A"
@@ -98,13 +107,15 @@ const Schedule = () => {
           onChange={handleChange}
           margin="normal"
         />
+        
         <Button
           fullWidth
           variant="contained"
           sx={{ mt: 2 }}
           onClick={handleSchedule}
+          disabled={loading}
         >
-          Schedule Match
+          {loading ? 'Scheduling...' : 'Schedule Match'}
         </Button>
       </Paper>
     </Box>

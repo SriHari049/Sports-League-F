@@ -1,13 +1,43 @@
-import { Box, Button, MenuItem, TextField } from '@mui/material';
+import { Box, Button, MenuItem, TextField, Typography } from '@mui/material';
+import axios from 'axios';
 import { useState } from 'react';
 
 const TicketBookingForm = ({ onBook }) => {
   const [section, setSection] = useState('General');
   const [seats, setSeats] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onBook({ section, seats });
+    setLoading(true);
+    setError(''); // Clear previous error
+
+    const token = localStorage.getItem('jwtToken'); // JWT token from localStorage
+
+    try {
+      const response = await axios.post(
+        'https://localhost:8081/tickets', // Replace with actual API endpoint
+        { section, seats },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        // Notify the parent component if needed
+        onBook({ section, seats });
+        alert('Tickets booked successfully!');
+      } else {
+        setError('Failed to book tickets.');
+      }
+    } catch (err) {
+      setError('Error booking tickets. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -31,7 +61,21 @@ const TicketBookingForm = ({ onBook }) => {
         onChange={(e) => setSeats(e.target.value)}
         margin="normal"
       />
-      <Button type="submit" variant="contained" fullWidth>Book Tickets</Button>
+      {error && (
+        <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+          {error}
+        </Typography>
+      )}
+      <Box sx={{ mt: 2 }}>
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          disabled={loading} // Disable button during loading state
+        >
+          {loading ? 'Booking...' : 'Book Tickets'}
+        </Button>
+      </Box>
     </Box>
   );
 };

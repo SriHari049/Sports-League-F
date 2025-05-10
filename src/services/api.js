@@ -1,34 +1,50 @@
-// Mock API without axios (temporary)
+const BASE_URL = 'http://localhost:8081/players/'; // Adjust your API base URL
 
-export const getLiveMatches = async () => {
-  return [
-    { id: 1, teamA: 'Tigers', teamB: 'Lions', scoreA: 145, scoreB: 130, status: 'Live' },
-    { id: 2, teamA: 'Falcons', teamB: 'Eagles', scoreA: 200, scoreB: 198, status: 'Live' },
-  ];
+// Fetch players from the backend
+export const fetchPlayers = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${BASE_URL}all`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch players');
+    }
+
+    const players = await response.json();
+    return players;
+  } catch (error) {
+    console.error('Error fetching players:', error);
+    throw error; // Re-throw error to be handled in the component
+  }
 };
 
-export const getUpcomingFixtures = async () => {
-  return [
-    { id: 3, teamA: 'Wolves', teamB: 'Bulls', date: '2025-05-20' },
-    { id: 4, teamA: 'Dragons', teamB: 'Knights', date: '2025-05-22' },
-  ];
-};
+// Add a new player
+export const addPlayer = async (newPlayer) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${BASE_URL}add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(newPlayer),
+    });
 
-export const bookTicket = async (matchId, seatId) => {
-  return { success: true, matchId, seatId };
-};
+    if (!response.ok) {
+      throw new Error('Failed to add player');
+    }
 
-export const getSeatingChart = async (matchId) => {
-  return {
-    VIP: [{ id: 'vip1', booked: false }, { id: 'vip2', booked: true }],
-    General: [{ id: 'gen1', booked: false }, { id: 'gen2', booked: false }]
-  };
-};
-
-export const updateScore = async (matchId, scoreData) => {
-  return { success: true, matchId, ...scoreData };
-};
-
-export const createFixture = async (data) => {
-  return { success: true, fixture: data };
+    const player = await response.json();
+    return player; // Return the added player
+  } catch (error) {
+    console.error('Error adding player:', error);
+    throw error; // Re-throw error to be handled in the component
+  }
 };

@@ -36,7 +36,7 @@ const Navbar = () => {
             <Button color="inherit" component={Link} to="/schedule">Schedule</Button>
           )}
           {!user ? (
-            <Button color="inherit" component={Link} to="/login">Login</Button>
+            <Button color="inherit" component={Link} to="/auth">Login</Button>
           ) : (
             <>
               <Button color="inherit" onClick={handleMenuOpen}>{user.name}</Button>
