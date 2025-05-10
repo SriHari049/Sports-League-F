@@ -1,0 +1,9 @@
+{
+  "matches": [
+    { "id": 1, "teamA": "Tigers", "teamB": "Lions", "scoreA": 145, "scoreB": 130, "status": "Live" },
+    { "id": 2, "teamA": "Eagles", "teamB": "Wolves", "scoreA": 0, "scoreB": 0, "status": "Upcoming" }
+  ],
+  "fixtures": [
+    { "id": 3, "teamA": "Sharks", "teamB": "Falcons", "date": "2025-05-20" }
+  ]
+}
